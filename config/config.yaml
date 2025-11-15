@@ -1,0 +1,8 @@
+env: "local" # local/development/production
+db_url: "dbdb"
+db_password : "dbdb"
+
+http_server: 
+  port: ":8081"
+  timeout: 5s
+  idle_timeout: 30s
