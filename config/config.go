@@ -13,6 +13,7 @@ type Config struct {
 	DatabaseURL       string `yaml:"db_url" env-required:"true"`
 	DatabasePasswowrd string `yaml:"db_password" env-required:"true"`
 	HTTPServer        `yaml:"http_server"`
+	JwtSecret         string `yaml:"secret" env-required:"true"`
 }
 
 type HTTPServer struct {

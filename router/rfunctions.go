@@ -2,7 +2,6 @@ package router
 
 import (
 	"net/http"
-	"regexp"
 
 	"github.com/bejiayll/avtosells.git/config"
 	"github.com/gin-gonic/gin"
@@ -26,18 +25,19 @@ func User(c *gin.Context) {
 	})
 }
 
-func TestFields(c *gin.Context) {
-	var field config.Field
-	if err := c.ShouldBindJSON(&field); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-	invalidChars := regexp.MustCompile(`[\s~!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]`)
-	if invalidChars.MatchString(field.Field) {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error":   "INVALID_CHARACTERS",
-			"message": "Field allow only letters and numbers",
-		})
-		return
-	}
-}
+// func TestFields(c *gin.Context) {
+// 	var field config.Field
+// 	if err := c.ShouldBindJSON(&field); err != nil {
+// 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+// 		return
+// 	}
+
+// 	if CheckName(field.Field) && CheckName(field.Tank) {
+// 		c.JSON(http.StatusBadRequest, gin.H{
+// 			"error":   "INVALID_CHARACTERS",
+// 			"message": "Field allow only letters",
+// 		})
+// 		return
+// 	}
+// 	log.Println(field)
+// }

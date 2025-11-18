@@ -1,6 +1,7 @@
 env: "local" # local/development/production
 db_url: "dbdb"
 db_password : "dbdb"
+secret: "HitryZefir"
 
 http_server: 
   port: ":8081"
