@@ -5,7 +5,6 @@ from typing import Annotated
 
 from datetime import date
 
-
 PhoneNumber.default_region = 'RU'
 
 class AdFilterSchema(BaseModel):
