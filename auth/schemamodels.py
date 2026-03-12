@@ -1,4 +1,5 @@
 from pydantic import BaseModel, EmailStr
+from typing import Optional
 
 class SchemaUserLogin(BaseModel):
     email: str = EmailStr()
@@ -11,3 +12,11 @@ class SchemaUserRegister(BaseModel):
     phone: str
     password: str
 
+class SchemaUserResponse(BaseModel):
+    id: int
+    email: str
+    name: str
+    phone: Optional[str] = None
+    
+    class Config:
+        from_attributes = True
