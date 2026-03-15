@@ -65,14 +65,12 @@ async def register(creds: SchemaUserRegister, response: Response, session: Async
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Email already registered"
         )
-    user_schema = UserSchema(
-        email=creds.email,
-        phone_number=creds.phone,
-        password=hashpw(creds.password.encode('utf-8'), gensalt()),
-        name=creds.name,
-        tear=0
-    )
-    user = await createUser(session, user_schema)
+
+    user = User(**creds.model_dump)
+    session.add(user)
+    await session.commit()
+    await session.refresh()
+
     token = security.create_access_token(uid=str(user.id))
     response.set_cookie(
         key=config.JWT_ACCESS_COOKIE_NAME,
@@ -80,8 +78,8 @@ async def register(creds: SchemaUserRegister, response: Response, session: Async
         httponly=True,
         samesite="lax"
     )
-    return {"access_token": token}
 
+    return {"access_token": token}
 
 # @app.post("/protected")
 # def protected(user=Depends(security.access_token_required)):

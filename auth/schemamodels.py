@@ -16,7 +16,7 @@ class SchemaUserResponse(BaseModel):
     id: int
     email: str
     name: str
-    phone: Optional[str] = None
+    phone_number: Optional[str] = None
     tear: int
     
     model_config = ConfigDict(from_attributes=True)

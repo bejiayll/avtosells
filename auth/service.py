@@ -55,3 +55,18 @@ async def current_user(request: Request, db: AsyncSession = Depends(get_session)
     
     return user
 
+def require_permissions(tier: int):
+    """
+        @router.get("/admin", dependencies=[Depends(require_permissions(x))])
+        async def admin_panel(current_user: User = Depends(current_user)):
+            ...
+    """
+    async def check_tear(current_user: User = Depends(current_user)):
+        if current_user.tear < tier:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail=f"Insufficient permissions."
+            )
+        return current_user
+    
+    return check_tear
