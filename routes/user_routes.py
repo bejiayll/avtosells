@@ -14,19 +14,19 @@ from application import app
 from .social_schemas import *
 
 
-# @app.get("/me", response_model=SchemaUserResponse)
-# async def protected(db: AsyncSession = Depends(get_session), user: User = Depends(current_user)):
-#     return user
+@app.get("/me", response_model=SchemaUserResponse, dependencies=[Depends(require_permissions(0))])
+async def protected(db: AsyncSession = Depends(get_session), user: User = Depends(current_user)):
+    return user
 
-# @app.get("/admin", dependencies=[Depends(require_permissions(2))])
-# async def admin(db: AsyncSession = Depends(get_session), user: User = Depends(current_user)):
-#     return user 
+@app.get("/admin", dependencies=[Depends(require_permissions(2))])
+async def admin(db: AsyncSession = Depends(get_session), user: User = Depends(current_user)):
+    return user 
 
-adsRouter = APIRouter(prefix="/ad", tags=["ads"], dependencies=[Depends(require_permissions(0))])
+adsRouter = APIRouter(prefix="/ad", tags=["ads"])
 reviewsRouter = APIRouter(prefix="/review", tags=["review"], dependencies=[Depends(require_permissions(0))])
 ticketRouter = APIRouter(prefix="/ticket", tags=["ticket"])
 
-@adsRouter.get("/get-ad/{id}", response_model=AdResponseSchema)
+@adsRouter.get("/get/{id}", response_model=AdResponseSchema)
 async def get_ad(id: int, session: AsyncSession = Depends(get_session)):
     
     ad = await getAdById(session, id)
@@ -34,13 +34,17 @@ async def get_ad(id: int, session: AsyncSession = Depends(get_session)):
         raise HTTPException(status_code=404, detail="Ad not found")
     return ad
 
-@adsRouter.post("/create-ad", response_model=AdResponseSchema, status_code=201)
-async def create_ad(ad: AdCreateSchema, session: AsyncSession, user: User = Depends(current_user)):
+@adsRouter.post("/create", response_model=AdResponseSchema, status_code=201, dependencies=[Depends(require_permissions(0))])
+async def create_ad(ad: AdCreateSchema, session: AsyncSession = Depends(get_session), user: User = Depends(current_user)):
     
-    ad = Ad(**ad.model_dump(), author_id=user.id)
+    new_ad = Ad(**ad.model_dump(), author_id=user.id)
     
-    session.add(ad)
+    session.add(new_ad)
     await session.commit()
-    await session.refresh()
+    await session.refresh(new_ad)
 
-    return ad
+    return new_ad
+
+app.include_router(adsRouter)
+app.include_router(reviewsRouter)
+app.include_router(ticketRouter)
