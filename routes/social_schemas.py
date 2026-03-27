@@ -25,19 +25,37 @@ class Formfactor(IntEnum):
     FF_CROSSOVER = 6
     FF_PICKUP = 7
 
+class UserBriefSchema(BaseModel):
+    id: int
+    name: str
+    tier: int
+    
+    model_config = ConfigDict(from_attributes=True)
 
 class AdCreateSchema(BaseModel):
-    brand: str
-    price: int
-    horsepower: float
-    volume: float
-    millage: int
-    gearbox_steps: int
+    
+    brand: str = Field(..., min_length=1, max_length=100)
+    price: int = Field(..., ge=0)
+    
+    horsepower: float = Field(..., gt=0, le=2000)
+    volume: float = Field(..., gt=0, le=10.0)
+
+    millage: int = Field(..., ge=0)
+    
+    gearbox_steps: int = Field(..., ge=1, le=10)
     gearbox: Gearbox
-    drive: Drive
-    form: Formfactor
-    production_year: int
+
+    drive: Drive      
+    form: Formfactor  
+    
+    production_year: int = Field(..., ge=1945, le=2100)
+    
     images: List[str] = Field(default_factory=list)
+
+    model_config = ConfigDict(
+        use_enum_values=True, 
+        populate_by_name=True,
+    )
 
 class AdResponseSchema(BaseModel):
     id: int
@@ -83,7 +101,9 @@ class MessageCreateSchema(BaseModel):
 class MessageResponseSchema(BaseModel):
     id: int
     content: str
-    author_id: int
+
+    author: "UserBriefSchema"
+
     ticket_id: int
     created_at: datetime
     last_update: Optional[datetime] = None
@@ -100,6 +120,9 @@ class TicketResponseSchema(BaseModel):
     topic: str
     commentary: str
     topicstarter_id: int
+
+    messages: list["MessageResponseSchema"] = []
+
     created_at: datetime
     last_update: Optional[datetime] = None
     

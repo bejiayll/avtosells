@@ -1,4 +1,5 @@
 from pydantic import BaseModel, EmailStr, ConfigDict
+from datetime import datetime
 from typing import Optional
 
 class SchemaUserLogin(BaseModel):
@@ -6,10 +7,9 @@ class SchemaUserLogin(BaseModel):
     password: str
 
 class SchemaUserRegister(BaseModel):
-    username: str
     name: str
     email: str = EmailStr()
-    phone: str
+    phone_number: str
     password: str
 
 class SchemaUserResponse(BaseModel):
@@ -17,6 +17,7 @@ class SchemaUserResponse(BaseModel):
     email: str
     name: str
     phone_number: Optional[str] = None
-    tear: int
+    created_at: datetime 
+    tier: int
     
     model_config = ConfigDict(from_attributes=True)

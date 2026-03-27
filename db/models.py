@@ -20,7 +20,7 @@ class User(Base):
     description: Mapped[str | None] = mapped_column(String, nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=func.now())
     last_update: Mapped[datetime] = mapped_column(DateTime, server_default=func.now(), onupdate=func.now())
-    tear: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    tier: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
 
     reviews_sent: Mapped[list["Review"]] = relationship(
         "Review",
@@ -118,3 +118,6 @@ class Ticket(Base):
     
     topic: Mapped[str] = mapped_column(String(255), nullable=False)
     commentary: Mapped[str] = mapped_column(String, nullable=False)
+
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=func.now())
+    last_update: Mapped[datetime] = mapped_column(DateTime, server_default=func.now(), onupdate=func.now(), nullable=True)

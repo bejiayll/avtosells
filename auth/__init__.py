@@ -14,6 +14,7 @@ from db.models import *
 from db.service import *
 from db.schemamodels import UserSchema
 
+
 load_dotenv()
 
 config = AuthXConfig(
@@ -66,10 +67,11 @@ async def register(creds: SchemaUserRegister, response: Response, session: Async
             detail="Email already registered"
         )
 
-    user = User(**creds.model_dump)
+    user = User(**creds.model_dump())
+    user.password = hashpw(creds.password.encode('utf-8'), gensalt()).decode('utf-8')
     session.add(user)
     await session.commit()
-    await session.refresh()
+    await session.refresh(user)
 
     token = security.create_access_token(uid=str(user.id))
     response.set_cookie(
@@ -80,6 +82,11 @@ async def register(creds: SchemaUserRegister, response: Response, session: Async
     )
 
     return {"access_token": token}
+
+@app.get("/logout")
+async def logout(response: Response, session: AsyncSession = Depends(get_session)):
+    response.delete_cookie(config.JWT_ACCESS_COOKIE_NAME)
+
 
 # @app.post("/protected")
 # def protected(user=Depends(security.access_token_required)):

@@ -62,10 +62,10 @@ def require_permissions(tier: int):
             ...
     """
     async def check_tear(current_user: User = Depends(current_user)):
-        if current_user.tear < tier:
+        if current_user.tier < tier:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
-                detail=f"Insufficient permissions."
+                detail=f"Недостаточно прав."
             )
         return current_user
     

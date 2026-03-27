@@ -1,35 +1,39 @@
 from pydantic import BaseModel, Field, EmailStr
 from pydantic_extra_types.phone_numbers import PhoneNumber
 import phonenumbers
-from typing import Annotated
+
+from typing import Annotated, Optional
 
 from datetime import date
 
 PhoneNumber.default_region = 'RU'
 
 class AdFilterSchema(BaseModel):
-    max_milage: int = 1000000000
-    min_milage: int = 1 
-
-    max_volume: float = 170.0
-    min_volume: float = 0.8
-
-    max_price: int = 50000000
-    min_price: int = 1000
-
-    max_year: int = int(date.today().year)
-    min_year: int = 1945
-
-    max_power: int = 1000
-    min_power: int = 1
-
-    gearbox: int = 0
-    drive: int = 0
-    body_type: int = 0
+    min_millage: Optional[int] = Field(None, ge=0)
+    max_millage: Optional[int] = Field(None, ge=0)
+    
+    min_volume: Optional[float] = Field(None, gt=0)
+    max_volume: Optional[float] = Field(None, gt=0)
+    
+    min_price: Optional[int] = Field(None, ge=0)
+    max_price: Optional[int] = Field(None, ge=0)
+    
+    min_year: Optional[int] = Field(None, ge=1945, le=2100)
+    max_year: Optional[int] = Field(None, ge=1945, le=2100)
+    
+    min_power: Optional[int] = Field(None, ge=0)
+    max_power: Optional[int] = Field(None, ge=0)
+    
+    gearbox: Optional[int] = Field(None, ge=0, le=3)
+    drive: Optional[int] = Field(None, ge=0, le=2)
+    body_type: Optional[int] = Field(None, ge=0, le=7)
+    
+    limit: int = Field(default=20, ge=1, le=100)
+    offset: int = Field(default=0, ge=0)
 
 class UserSchema(BaseModel):
     email: EmailStr
     phone_number: Annotated[str, PhoneNumber]
     password: str
     name: str
-    tear: int = 0
+    tier: int = 0
